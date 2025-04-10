@@ -1,46 +1,55 @@
 import React from "react";
-import Replicate from "replicate";
 
-const replicate = new Replicate({
-  auth: import.meta.env.VITE_REPLICATE_API_TOKEN,
-});
+function ButtonGenerateImage({ loading, setLoading, setImageUrl, prompt }) {
 
-function ButtonGenerateImage ({loading, setLoading, setImageUrl, prompt}) {
+  const handleGenerateImage = async () => {
+    if (!prompt.trim()) return;
 
-    const handleGenerateImage = async () => {
-      if (!prompt.trim()) return;
-  
-      setLoading(true);
-      setImageUrl("");
-  
-      try {
-        const output = await replicate.run(
-          "stability-ai/sdxl:fd8b0d6c6cd356387c26ff8313ef6a8c9b6bfc9b547b9ee184b6dfd6b5b9f427",
-          {
-            input: {
-              prompt: prompt,
-            },
-          }
-        );
-  
-        setImageUrl(output[0]);
-      } catch (error) {
-        console.error("Error al generar imagen:", error);
-        alert("Error al generar imagen.");
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setImageUrl("");
+
+    console.log("Enviando prompt al backend:", prompt);
+
+    try {
+      const response = await fetch("http://localhost:5000/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Respuesta no OK del backend");
       }
-    };
+
+      const data = await response.json()
+      console.log("Respuesta del backend:", data);
+
+      if (data && data.output && Array.isArray(data.output)) {
+        setImageUrl(data.output[0]);
+      } else {
+        console.error("Formato inesperado:", data);
+        alert("No se pudo obtener la imagen.");
+      }
+    } catch (error) {
+      console.error("ERROR DETALLADO:", error.message || error);
+      alert("Error al generar imagen: " + (error.message || error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <>
-    <button
-              className="btn btn-outline-success"
-              onClick={handleGenerateImage}
-              disabled={loading}
-            >
-              🖼️ Generar imagen
-            </button>
+      <button
+        className="btn btn-outline-success"
+        onClick={handleGenerateImage}
+        disabled={loading}
+      >
+        🖼️ Generar imagen
+      </button>
     </>
   )
 }
