@@ -4,7 +4,7 @@ function ButtonMedium({response}) {
 
   // const [response, setResponse] = useState("");
 
-    console.log("response here", response)
+    // console.log("response here", response)
 
     const handlePublishToMedium = async () => {
       if (!response) return alert("No hay artículo para compartir.");

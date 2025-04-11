@@ -11,13 +11,15 @@ function ButtonGenerateImage({ loading, setLoading, setImageUrl, prompt }) {
     console.log("Enviando prompt al backend:", prompt);
 
     try {
-      const response = await fetch("http://localhost:5000/generate-image", {
+      const response = await fetch("http://localhost:5001/generate-image", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt }),
       });
+
+      console.log("RESSSSSSPONSE",response)
 
       if (!response.ok) {
         throw new Error("Respuesta no OK del backend");
