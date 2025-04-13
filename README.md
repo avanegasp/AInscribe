@@ -28,3 +28,8 @@ Ejecutar Frontend
 Install
 
 - npm install express node-fetch dotenv cors
+
+Environment
+
+- VITE_GEMINI_API_KEY=
+- REPLICATE_API_TOKEN=
